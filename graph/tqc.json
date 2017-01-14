@@ -1,0 +1,46 @@
+{
+    "format": "icm",
+    "circuit": {
+        "initializations": [],
+        "bits": [
+            0,
+            1
+        ],
+        "corrections": [],
+        "measurements": [],
+        "inputs": [
+            0,
+            1
+        ],
+        "cnots": [
+            {
+                "controls": [
+                    1
+                ],
+                "targets": [
+                    0
+                ]
+            },
+            {
+                "controls": [
+                    0
+                ],
+                "targets": [
+                    1
+                ]
+            },
+            {
+                "controls": [
+                    1
+                ],
+                "targets": [
+                    0
+                ]
+            }
+        ],
+        "outputs": [
+            0,
+            1
+        ]
+    }
+}
