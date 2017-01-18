@@ -47,9 +47,8 @@
 
 \begin{document}
 \Qcircuit @C=1cm @R=1cm {
- &  \targ  &  \qw  &  \qw  &  \qw  &  \qw  &  \gate{Z(measurement)}  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \ctrl{1}  & \qw \\ 
- &  \ctrl{-1}  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \gate{XZ(correction)}  & \qw \\ 
- &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  & \qw \\ 
- &  \qw  &  \ctrl{1}  &  \qw  &  \qw  &  \gate{Z(measurement)}  &  \qw  &  \qw  &  \qw  &  \qw  &  \qw  &  \ctrl{1}  &  \qw  & \qw \\ 
+ &  \gate{IN(input)}  &  \qw  &  \qw  &  \targ  &  \targ  &  \qw  &  \gate{z(measurement)}  &  \ctrl{1}  &  \qw  &  \qw  & \qw \\ 
+ &  \qw  &  \qw  &  \gate{Y(ancilla)}  &  \qw  &  \ctrl{-1}  &  \targ  &  \qw  &  \gate{xz(correction)}  &  \gate{OUT(output)}  &  \qw  & \qw \\ 
+ &  \qw  &  \gate{IN(input)}  &  \qw  &  \ctrl{-2}  &  \qw  &  \ctrl{-1}  &  \qw  &  \qw  &  \qw  &  \gate{OUT(output)}  & \qw \\ 
 }
 \end{document}
