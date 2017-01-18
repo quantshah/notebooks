@@ -83,8 +83,8 @@ def construct_icm_graph(qcircuit):
             except ValueError:
                 print(gate.name, gate_count)
 
-            g.add_node(cleft, get_icm_attrs(gate_count = gate_count, color="r", pos = (gate_count - 0.25, - control_bit), pin = pin_cleft))
-            g.add_node(cright, get_icm_attrs(gate_count = gate_count, color="r", pos = (gate_count + 0.25, - control_bit), pin = pin_cright))
+            g.add_node(cleft, get_icm_attrs(gate_count = gate_count, color="r", pos = (gate_count - 0.50, - control_bit), pin = pin_cleft))
+            g.add_node(cright, get_icm_attrs(gate_count = gate_count, color="r", pos = (gate_count + 0.50, - control_bit), pin = pin_cright))
             g.add_node(target, get_icm_attrs(gate_count = gate_count, color="r", pos = (gate_count, - target_bit), pin=pin_target))
             
             g.add_node(rough, get_icm_attrs(color="b", pos = (gate_count, - (target_bit + control_bit)/2.)))
@@ -104,7 +104,7 @@ def draw_graph(g):
     node_color=[g.node[key]["color"] for key in g.nodes()]
     node_labels = {}
     for key in g.nodes():        
-        node_labels[key] = (g.node[key]["pin"])
+        node_labels[key] = (g.node[key]["pin"], key)
     pos=nx.get_node_attributes(g,'pos')
     nx.draw_networkx(g, node_color=node_color, pos = pos, labels=node_labels)
     plt.show()
@@ -151,7 +151,7 @@ def combine_graph(g, circuit):
                 
             if len(temp_pins) == 0:
                 temp_pins = None
-            g = nx.contracted_nodes(g, key, item)
+            g = nx.contracted_nodes(g, key, item, self_loops=False)
             nx.set_node_attributes(g, "pin", {key: temp_pins})
             
     for key in c_mergers:
@@ -165,13 +165,17 @@ def combine_graph(g, circuit):
         if len(temp_pins) == 0:
             temp_pins = None
             
-        g = nx.contracted_nodes(g, key, c_mergers[key])
+        g = nx.contracted_nodes(g, key, c_mergers[key], self_loops=False)
         nx.set_node_attributes(g, "pin", {key: temp_pins})
 
     return g
 
-def teleport(g):
-    for node in g.node:
+def teleport(g, count=1):
+    teleport_list = []
+    pin_list = {}
+    color_list = {}
+    tcount = 0
+    for node in g:
         neighbors = g.neighbors(node)
         if len(neighbors) == 1:
             temp_pin = []
@@ -184,13 +188,19 @@ def teleport(g):
                 
             if len(temp_pin) == 0:
                 temp_pins = None
-            c = g.node[node]["color"]
-            g = nx.contracted_nodes(g, neighbors[0], node)
-            nx.set_node_attributes(g, "pin", {neighbors[0]: temp_pin})
-            nx.set_node_attributes(g, "color", {neighbors[0]: c})
 
+            c = g.node[node]["color"]
+            if tcount < count:
+                teleport_list += [(neighbors[0], node)]
+                g = nx.contracted_nodes(g, neighbors[0], node, self_loops=False)
+
+        
+                nx.set_node_attributes(g, "pin", {neighbors[0]: temp_pin})
+                # nx.set_node_attributes(g, "color", {neighbors[0]: c})
+                tcount += 1
 
     return g
+
 
 def three_loop_reduction(g, opt1=0, opt2=0):
     removeables = []
@@ -213,6 +223,7 @@ def three_loop_reduction(g, opt1=0, opt2=0):
         g.remove_node(removeables[opt1])
         print("optional", optional)
         g.remove_node(optional[removeables[opt1]][opt2])
+    return g
         
 def two_loop_reduction(g, opt1=0, opt2=0):
     removeables = []
@@ -234,3 +245,4 @@ def two_loop_reduction(g, opt1=0, opt2=0):
                 g.remove_node(optional[opt2])
             except:
                 pass
+    return g
